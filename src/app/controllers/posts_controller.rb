@@ -1,8 +1,10 @@
 class PostsController < ApplicationController
   def index
+    @posts = Post.all
   end
 
   def show
+    @post = Post.find(params[:id])
   end
 
   def new
@@ -13,14 +15,14 @@ class PostsController < ApplicationController
   end
 
   def create
-    blog = Blog.new(blog_params)
-    blog.save
-    redirect_to blogs_path
+    post = Post.new(post_params)
+    post.save
+    redirect_to post_path(post.id)
   end
 
   private
-  def blog_params
-    params.require(:blog).permit(:title, :category, :body)
+  def post_params
+    params.require(:post).permit(:title, :category, :body)
   end
 
 end
