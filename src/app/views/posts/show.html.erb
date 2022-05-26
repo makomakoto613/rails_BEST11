@@ -52,7 +52,9 @@
         <%= @post.body %>
       </p>
       <a href="#">編集</a>
+      <%= link_to "編集", edit_post_path(@post) %>
       <a href="#">削除</a>
+      <%= link_to "削除", post_path(@post), method: :delete %>
       <div class="author-case clearfix">
         <div class="author-image"></div>
         <div class="author-box">
