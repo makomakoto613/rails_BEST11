@@ -15,6 +15,16 @@
  */
 
 /* common */
+.drag-and-drop {
+  cursor: move;
+  position: absolute;
+  z-index: 1000;
+}
+
+.drag {
+  z-index: 1001;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -266,3 +276,4 @@
     font-size: 10px;
   }
   /*---show.html.erb---*/
+
