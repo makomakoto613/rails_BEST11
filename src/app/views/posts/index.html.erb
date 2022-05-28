@@ -33,30 +33,30 @@
 </div>
 
 <main class="clearfix">
-  <section class="blog">
-    <h2 class="blog-headline">Recent Blogs</h2>
-    <div class="blog-box">
+  <section class="post">
+    <h2 class="post-headline">Recent Blogs</h2>
+    <div class="post-box">
     <% @posts.each do |post| %>
-        <div class="blog-item clearfix">
-          <div class="blog-image"><%= image_tag('img/forest.jpg',  class: 'blog-image') %></div>
-          <section class="blog-text">
-            <h3 class="blog-text-headline"><%= link_to blog.title, blog_path(blog) %></h3>
-            <p class="blog-date"><%= blog.created_at %></p>
-            <span class="category"><%= blog.category %></span>
+        <div class="post-item clearfix">
+          <div class="post-image"><%= image_tag('img/forest.jpg',  class: 'post-image') %></div>
+          <section class="post-text">
+            <h3 class="post-text-headline"><%= link_to post.title, post_path(post) %></h3>
+            <p class="post-date"><%= post.created_at %></p>
+            <span class="category"><%= post.category %></span>
           </section>
         </div>
       <% end %>
-      <div class="blog-item clearfix">
-        <%= image_tag('img/forest.jpg',  class: 'blog-image') %>
-        <section class="blog-text">
-          <h3 class="blog-text-headline">
+      <div class="post-item clearfix">
+        <%= image_tag('img/forest.jpg',  class: 'post-image') %>
+        <section class="post-text">
+          <h3 class="post-text-headline">
             <a href="single.html">
               Hopeful lessons from<br>
               the battle to save<br>
               rainforests
             </a>
           </h3>
-          <p class="blog-date">June 19, 2017</p>
+          <p class="post-date">June 19, 2017</p>
           <span class="category">Nature</span>
         </section>
       </div>
