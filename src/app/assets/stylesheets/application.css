@@ -15,14 +15,37 @@
  */
 
 /* common */
+
+
+#jquery-ui-draggable-wrap {
+    width: 500px;
+    height: 300px;
+    padding: 5px;
+    margin: 0;
+    border-style: dashed;
+    border-radius: 10px;
+}
+#jquery-ui-draggable {
+    width: 100px;
+    height: 100px;
+    padding: 30px;
+    margin: 0;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
 .drag-and-drop {
   cursor: move;
   position: absolute;
   z-index: 1000;
 }
-
 .drag {
   z-index: 1001;
+}
+
+.clip-others-barca-01{
+  position: absolute;
+  z-index: 5000;
 }
 
 * {
