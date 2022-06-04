@@ -11,6 +11,34 @@
   <h4>本文</h4>
   <%= f.text_area :body %>
 
+
+  <div class="drag-and-drop" id="red-box"><i class="fas fa-tshirt clip-others-barca-01" style="color: red;"></i></div>
+  <div class="drag-and-drop" id="blue-box"><i class="fas fa-tshirt clip-others-barca-02" style="color: blue;"></i></div>
+  <div class="drag-and-drop" id="yellow-box"><i class="fas fa-tshirt clip-others-barca-03" style="color: yellow;"></i></div>
+
+  <div id="jquery-ui-draggable-wrap" class="ui-widget-content">
+    <div id="jquery-ui-draggable" class="ui-widget-content">
+        <p>ドラッグして<br />特定要素内だけ<br />移動できる<br />ボックス。</p>
+    </div>
+　</div>
+
+
+
   <%= f.submit '投稿' %>
+
+
+
+
+<script>
+<!--
+jQuery( function() {
+    jQuery( '#jquery-ui-draggable' ) . draggable( {
+        containment: 'parent',
+        scroll: false,
+    } );
+} );
+// -->
+
+</script>
 
 <% end %>
