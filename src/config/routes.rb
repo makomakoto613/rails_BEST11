@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  root 'post_images#index'
+  root 'posts#index'
   get 'posts/index'
   get 'posts/show'
   get 'posts/new'
