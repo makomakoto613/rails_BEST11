@@ -9,7 +9,7 @@
     <link href='https://fonts.googleapis.com/css?family=Raleway:400,600,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
 
-    <%= stylesheet_pack_tag "material-dashboard", media: "all", 'data-turbolinks-track': "reload" %>
+    <%= stylesheet_pack_tag "application", media: "all", 'data-turbolinks-track': "reload" %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
@@ -20,7 +20,7 @@
         <div class="container relative">
           <div class="navbar-header">
             <a class="navbar-logo" href="/">
-              <%= image_tag('img/logo.png') %>
+              <%= image_pack_tag 'media/images/logo.png' %>
             </a>
 
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
@@ -60,7 +60,7 @@
               <br>
               善良な市民同士で無差別に食欲を煽るSNS
           </p>
-              <%= image_tag('img/logo-white.png') %>
+             
 
             </div>
           </div>
