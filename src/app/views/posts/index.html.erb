@@ -49,7 +49,7 @@
       <% end %>
       <div class="post-item clearfix">
         <%= image_pack_tag 'media/images/forest.jpg' %>
-        
+
         <section class="post-text">
           <h3 class="post-text-headline">
             <a href="single.html">
@@ -106,7 +106,14 @@
       </div>
     </section>
   </div>
-</main>
+  <script>
+  var img = new Image();  // インスタンス化
+  img.src = '..src/app/javascript/uni.jpg';  // 画像ファイルの読み込み
+  document.body.appendChild(img);
+  </script>
+
+
+  </main>
 
 <footer>
   <p class="footer-text">© All rights reserved </p>

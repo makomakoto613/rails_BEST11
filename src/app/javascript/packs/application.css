@@ -1,32 +1,16 @@
-#jquery-ui-draggable-wrap {
-    width: 500px;
-    height: 300px;
-    padding: 5px;
-    margin: 0;
-    border-style: dashed;
-    border-radius: 10px;
+#draggableArea {
+  width: 100%;
+  height: 480px;
+  border: solid 1px #000;
 }
-#jquery-ui-draggable {
-    width: 100px;
-    height: 100px;
-    padding: 30px;
-    margin: 0;
-    border-radius: 10px;
-    font-size: 13px;
+
+#draggable {
+  width: 10%;
+  height: 10%;
 }
 
 .drag-and-drop {
-  cursor: move;
-  position: absolute;
-  z-index: 1000;
-}
-.drag {
-  z-index: 1001;
-}
-
-.clip-others-barca-01{
-  position: absolute;
-  z-index: 5000;
+  
 }
 
 * {
@@ -50,7 +34,6 @@
 
   /* header */
 
-  *
   header {
     position: relative;
     width: 90%;
@@ -236,7 +219,7 @@
   /*sidebar*/
 
   /*footer*/
-  /*
+
   footer {
     text-align: center;
     padding: 50px 0;
@@ -248,7 +231,7 @@
   /*footer*/
 
   /*---show.html.erb---*/
-  /*
+
   .single-blog {
     float: left;
     width: 520px;
@@ -292,3 +275,7 @@
 
   /*---show.html.erb---*/
 
+/*新規投稿*/
+.size {
+   color:#1da1f2;
+}
