@@ -99,10 +99,6 @@ window.onload = function () {
     isDragging: false
   });
 
-  canvas.onmousedown = myDown;
-  canvas.onmouseup = myUp;
-  canvas.onmousemove = myMove;
-
   draw();
 
   function rect(x, y, w, h) {
@@ -110,10 +106,12 @@ window.onload = function () {
     ctx.rect(x, y, w, h);
     ctx.closePath();
     ctx.fill();
+    ctx.save();
   }
 
   function clear() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.save();
   }
 
   function draw() {
@@ -134,9 +132,11 @@ window.onload = function () {
 
       //画像の場合
       ctx.drawImage(img, r.x, r.y, r.width, r.height);
+      ctx.save();
     }
-  }
 
+  }
+  canvas.onmousedown = myDown;
   function myDown(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -156,6 +156,7 @@ window.onload = function () {
     startY = my;
   }
 
+  canvas.onmouseup = myUp;
   function myUp(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -166,6 +167,7 @@ window.onload = function () {
     }
   }
 
+  canvas.onmousemove = myMove;
   function myMove(e) {
     if (dragok) {
       e.preventDefault();
@@ -191,14 +193,11 @@ window.onload = function () {
       startY = my;
     }
 }
-$('#save-button').click(function(){
-    var board = document.getElementById('board');
-    url = canvas.toDataURL('image/jpeg');
-    alert(url);
-    $('#post_image_url').val('');
-    $('#post_image_url').val(url);
-    $('#new_post').submit();
-})
-
 };
 
+$('save-button').submit(function( event ) {
+    event.preventDefault();
+
+    //post()の処理をここに記述する
+
+})

@@ -1,0 +1,3 @@
+class FormationPost < ApplicationRecord
+    
+end
