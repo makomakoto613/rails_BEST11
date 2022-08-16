@@ -16,8 +16,8 @@
 
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
 
-    <%= f.hidden_field :coordinates1, value: "" %>
-    
+    <%= f.hidden_field :coordinates, value: "" %>
+
 
 
 
@@ -25,12 +25,23 @@
 
 <script>
     window.onload = function () {
+        // canvas要素を取得
         var canvas = document.getElementById("canvas");
-        // canvasを使って二次元の画像を描くとき
+        // canvas要素が持つgetContext()メソッドを実行し、
+        // グラフィック描画のためのメソッドやプロパティを
+        // 持つオブジェクトを取得する。
+        // 引数を"2d"とすることで2Dグラフィックの描画に
+        // 特化したメソッドやプロパティを持つオブジェクトを取得し、
+        // 定数ctxに格納する。
         var ctx = canvas.getContext("2d");
-        //
+        // 定数ctxに格納したオブジェクトがもつプロパティやメソッドは
+        // ctx.プロパティ名、ctx.メソッド名() で呼び出せる
+
+
         var BB = canvas.getBoundingClientRect();
+        //左辺の座標
         var offsetX = BB.left;
+        //四角形の上辺の座標
         var offsetY = BB.top;
         var WIDTH = canvas.width;
         var HEIGHT = canvas.height;
@@ -44,7 +55,6 @@
         img.onload = () => {
         draw();
         }
-        var coordinates = [];
 
         var rects = [];
         rects.push({
@@ -128,14 +138,6 @@
         isDragging: false
         });
 
-    //初期値
-    for (var i = 0; i < rects.length; i++) {
-        coordinates.push({
-            x: rects[i].x,
-            y: rects[i].y
-        })
-    }
-
     draw();
 
     function rect(x, y, w, h) {
@@ -143,12 +145,10 @@
       ctx.rect(x, y, w, h);
       ctx.closePath();
       ctx.fill();
-      ctx.save();
     }
-
+    //アニメーションの各フレームの開始時に必要
     function clear() {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
-        ctx.save();
     }
 
     function draw() {
@@ -169,7 +169,6 @@
 
         //画像の場合
         ctx.drawImage(img, r.x, r.y, r.width, r.height);
-        ctx.save();
       }
 
     }
@@ -177,10 +176,11 @@
     function myDown(e) {
       e.preventDefault();
       e.stopPropagation();
-
+      //e.clientXはWEB画面全体のx座標（押した箇所のx座標）
+      //offsetXはcanvasの左上のx座標
       var mx = parseInt(e.clientX - offsetX);
       var my = parseInt(e.clientY - offsetY);
-
+      //アイコンを押したときのx座標とy座標を記録している
       dragok = false;
       for (var i = 0; i < rects.length; i++) {
         var r = rects[i];
@@ -189,6 +189,7 @@
           r.isDragging = true;
         }
       }
+      //startX,startYに最初アイコンをクリックした時の座標が記録される
       startX = mx;
       startY = my;
     }
@@ -199,17 +200,11 @@
         e.stopPropagation();
 
         dragok = false;
-        //coordinatesを初期化する
-        coordinates = [];
+
         for (var i = 0; i < rects.length; i++) {
             rects[i].isDragging = false;
-            coordinates.push({
-                x:rects[i].x,
-                y:rects[i].y
-            })
         }
-
-        document.getElementById('formation_post_coordinates1').value = coordinates;
+        document.getElementById('formation_post_coordinates').value = JSON.stringify(rects);
 
     }
 

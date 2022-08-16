@@ -1,0 +1,3 @@
+class PostUniform < ApplicationRecord
+    
+end

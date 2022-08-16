@@ -1,6 +1,6 @@
 <header>
   <h1 class="headline">
-    <%= link_to "CARAVAN", posts_path %>
+    <%= link_to "CARAVAN", formation_posts_path %>
   </h1>
   <div class="social">
     <i class="fa fa-facebook-square"></i>
@@ -33,28 +33,20 @@
 </div>
 
 <main class="clearfix">
-  <section class="single-post">
-    <h2 class="post-headline">Blog</h2>
-    <section class="post-box">
-      <h3 class="post-box-headline">
-        <%= @post.title %>
+  <section class="single-formation_post">
+    <h2 class="formation_post-headline">Blog</h2>
+    <section class="formation_post-box">
+      <h3 class="formation_post-box-headline">
+        <%= @formation_post.title %>
       </h3>
-      <div class="post-box-content">
-        <p class="category">
-          <%= @post.category %>
-        </p>
-        <p class="post-date">
-          <%= @post.created_at %>
+      <div class="formation_post-box-content">
+        <p class="formation_post-date">
+          <%= @formation_post.created_at %>
         </p>
       </div>
-      <%= image_tag "img/forest.jpg", class:"single-image" %>
       <p class="single-text">
-        <%= @post.body %>
+        <%= @formation_post.body %>
       </p>
-      <a href="#">編集</a>
-      <%= link_to "編集", edit_post_path(@post) %>
-      <a href="#">削除</a>
-      <%= link_to "削除", post_path(@post), method: :delete %>
       <div class="author-case clearfix">
         <div class="author-image"></div>
         <div class="author-box">

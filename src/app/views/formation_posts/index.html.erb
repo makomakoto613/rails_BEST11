@@ -39,11 +39,9 @@
     <div class="formation_post-box">
     <% @formation_posts.each do |formation_post| %>
         <div class="formation_post-item clearfix">
-          <div class="formation_post-image"><%= image_tag('img/forest.jpg',  class: 'formation_post-image') %></div>
           <section class="formation_post-text">
             <h3 class="formation_post-text-headline"><%= link_to formation_post.title, formation_post_path(formation_post) %></h3>
             <p class="formation_post-date"><%= formation_post.created_at %></p>
-            <span class="category"><%= formation_post.category %></span>
           </section>
         </div>
       <% end %>
@@ -106,11 +104,6 @@
       </div>
     </section>
   </div>
-  <script>
-  var img = new Image();  // インスタンス化
-  img.src = '..src/app/javascript/uni.jpg';  // 画像ファイルの読み込み
-  document.body.appendChild(img);
-  </script>
 
 
   </main>
