@@ -30,17 +30,8 @@ class FormationPostsController < ApplicationController
 
   def create
     @formation_post = FormationPost.new(formation_post_params)
-    p(formation_post_params)
     @formation_post.save
-    # A = formation_post_params["title"]
-    # B = formation_post_params["body"]
-    # {"title"=>"A","body"=>"B"}
-    # @formation_post = FormationPost.new(formation_post_params["title"])
-    # coordinates = JSON.parse(@uniform["coordinates1"])
-    # coordinates.each do |coordinate|
-    #   uniform_params = coordinate["x"]
-
-    redirect_to formation_posts_path, notice: '保存しました'
+    redirect_to formation_post_path(formation_post.id), notice: '保存しました'
   end
 
   formation_post_params = {
