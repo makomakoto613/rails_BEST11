@@ -13,10 +13,9 @@
     <canvas id="canvas" width=300 height=300></canvas>
 </div>
 
-
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
-
     <%= f.hidden_field :coordinates, value: "" %>
+    <%= f.hidden_field :image_url, :value => "" %>
 
 
 <script>
@@ -202,6 +201,12 @@
         }
         document.getElementById('formation_post_coordinates').value = JSON.stringify(rects);
 
+        url = canvas.toDataURL('image/jpeg');
+        //alert(url);
+        $('#picture_image_url').val('');
+        $('#picture_image_url').val(url);
+        $('#new_picture').submit();
+
     }
 
     canvas.onmousemove = myMove;
@@ -233,7 +238,7 @@
       }
   }
 
-    };
+  };
 
 </script>
 

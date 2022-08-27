@@ -30,6 +30,7 @@ class FormationPostsController < ApplicationController
 
   def create
     @formation_post = FormationPost.new(formation_post_params)
+    @formation_post.image_url = params['picture']['image_url']
     @formation_post.save
     redirect_to formation_post_path(formation_post.id), notice: '保存しました'
   end
@@ -103,7 +104,7 @@ class FormationPostsController < ApplicationController
 
   private
   def formation_post_params
-    params.require(:formation_post).permit(:title, :body, :coordinates)
+    params.require(:formation_post).permit(:title, :body, :coordinates, :image_url, :remark)
   end
 
 end

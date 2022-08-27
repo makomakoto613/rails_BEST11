@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_21_083123) do
+ActiveRecord::Schema.define(version: 2022_08_25_125229) do
 
   create_table "formation_posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 2022_08_21_083123) do
     t.datetime "updated_at", precision: 6, null: false
     t.text "coordinates"
     t.string "image_id"
+    t.text "image_url"
+    t.string "remark"
   end
 
   create_table "post_uniforms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
