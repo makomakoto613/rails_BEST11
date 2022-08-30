@@ -15,7 +15,7 @@
 
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
     <%= f.hidden_field :coordinates, value: "" %>
-    <%= f.hidden_field :image_url, :value => "" %>
+    <%= f.hidden_field :image_url, value: "" %>
 
 
 <script>
@@ -44,6 +44,9 @@
         var dragok = false;
         var startX;
         var startY;
+        var dataURL =  canvas.toDataURL('image/png');
+        console.log(window.location);
+        //window.location = dataURL;
 
         var img = new Image();
         img.src = "/images/uni.jpg";
@@ -135,6 +138,9 @@
 
     draw();
 
+    var url = canvas.toDataURL('image/jpeg');
+    document.getElementById("formation_post_image_url").value = url;
+
     function rect(x, y, w, h) {
       ctx.beginPath();
       ctx.rect(x, y, w, h);
@@ -165,6 +171,7 @@
         //画像の場合
         ctx.drawImage(img, r.x, r.y, r.width, r.height);
       }
+
 
     }
     canvas.onmousedown = myDown;
@@ -202,10 +209,7 @@
         document.getElementById('formation_post_coordinates').value = JSON.stringify(rects);
 
         url = canvas.toDataURL('image/jpeg');
-        //alert(url);
-        $('#picture_image_url').val('');
-        $('#picture_image_url').val(url);
-        $('#new_picture').submit();
+        document.getElementById("formation_post_image_url").value = url;
 
     }
 

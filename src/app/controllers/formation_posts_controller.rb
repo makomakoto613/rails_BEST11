@@ -30,22 +30,23 @@ class FormationPostsController < ApplicationController
 
   def create
     @formation_post = FormationPost.new(formation_post_params)
-    @formation_post.image_url = params['picture']['image_url']
+    # @formation_post.image_url = params['image_url']
     @formation_post.save
-    redirect_to formation_post_path(formation_post.id), notice: '保存しました'
+    # redirect_to formation_posts_path
+    redirect_to "/formation_posts/#{@formation_post.id}", notice: '保存しました'
   end
 
-  formation_post_params = {
-    "authenticity_token"=>"[FILTERED]",
-    "formation_post"=>
-      {
-        "title"=>"",
-        "body"=>"",
-        "coordinates1"=>
-          "[{\"x\":210,\"y\":55},{\"x\":130,\"y\":63},{\"x\":50,\"y\":55},{\"x\":90,\"y\":115},{\"x\":170,\"y\":115},{\"x\":130,\"y\":165},{\"x\":90,\"y\":215},{\"x\":170,\"y\":215},{\"x\":20,\"y\":185},{\"x\":250,\"y\":185}]"
-      },
-    "commit"=>"投稿"
-  }
+  # formation_post_params = {
+  #   "authenticity_token"=>"[FILTERED]",
+  #   "formation_post"=>
+  #     {
+  #       "title"=>"",
+  #       "body"=>"",
+  #       "coordinates1"=>
+  #         "[{\"x\":210,\"y\":55},{\"x\":130,\"y\":63},{\"x\":50,\"y\":55},{\"x\":90,\"y\":115},{\"x\":170,\"y\":115},{\"x\":130,\"y\":165},{\"x\":90,\"y\":215},{\"x\":170,\"y\":215},{\"x\":20,\"y\":185},{\"x\":250,\"y\":185}]"
+  #     },
+  #   "commit"=>"投稿"
+  # }
 
 
   # @formation_post = FormationPost.new(formation_post_params["formation_post"].delete("coordinates1"))
@@ -104,7 +105,7 @@ class FormationPostsController < ApplicationController
 
   private
   def formation_post_params
-    params.require(:formation_post).permit(:title, :body, :coordinates, :image_url, :remark)
+    params.require(:formation_post).permit(:title, :body, :coordinates, :image_url)
   end
 
 end
