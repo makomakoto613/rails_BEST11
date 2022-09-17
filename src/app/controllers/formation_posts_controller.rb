@@ -1,6 +1,7 @@
 class FormationPostsController < ApplicationController
   def index
     @formation_posts = FormationPost.all
+    @match_schedule = MatchSchedule.get
   end
 
   def show

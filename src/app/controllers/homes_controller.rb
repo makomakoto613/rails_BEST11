@@ -7,5 +7,7 @@ class HomesController < ApplicationController
   def create
   end
 
+  def new
+  end
 
 end
