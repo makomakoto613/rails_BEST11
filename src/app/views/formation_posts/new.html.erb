@@ -53,8 +53,12 @@
         let originalX;
         let originalY;
 
-        //const background = new Image();
-        //background.src = "/images/ground.jpg";
+
+        var background = new Image();
+        background.src = "/images/ground.jpg";
+
+
+
 
         const img = new Image();
         img.src = "/images/uni.jpg";
@@ -64,15 +68,22 @@
         }
 
         /*
-        // canvasに表示する画像
-        var imgs = [
-            '/images/ground.jpg',
-            '/images/uni.jpg'
-        ];
-
-        var imgArr = [];
-        var imgCount = 0;
+        let imagePath = "/images/ground.jpg";
+        drawground(canvas,imagePath);
+        function drawground(canvas,imagePath){
+            console.log("drawground");
+            const image = new Image();
+            image.addEventListener("load",function (){
+                canvas.width = image.naturalWidth;
+                canvas.height = image.naturalHeight;
+                ctx.drawImage(image, 0, 0);
+                ctx.scale(0.1, 0.1);
+                console.log("load!");
+            });
+            image.src = imagePath;
+        }
         */
+
 
         let rects = [];
         rects.push({
@@ -80,7 +91,7 @@
         y: 90 - 35,
         width: 30,
         height: 30,
-        fill: "#444444",
+        //fill: "#444444",
         isDragging: false
         });
         rects.push({
@@ -88,7 +99,7 @@
         y: 50 - 35,
         width: 30,
         height: 30,
-        fill: "#ff550d",
+        //fill: "#ff550d",
         isDragging: false
         });
         rects.push({
@@ -96,7 +107,7 @@
         y: 90 - 35,
         width: 30,
         height: 30,
-        fill: "#800080",
+        //fill: "#800080",
         isDragging: false
         });
         rects.push({
@@ -104,7 +115,7 @@
         y: 150 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -112,7 +123,7 @@
         y: 150 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -120,7 +131,7 @@
         y: 200 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -128,7 +139,7 @@
         y: 250 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -136,7 +147,7 @@
         y: 250 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -144,7 +155,7 @@
         y: 220 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
@@ -152,7 +163,7 @@
         y: 220 - 35,
         width: 30,
         height: 30,
-        fill: "#0c64e8",
+        //fill: "#0c64e8",
         isDragging: false
         });
 
@@ -165,7 +176,8 @@
       ctx.beginPath();
       ctx.rect(x, y, w, h);
       ctx.closePath();
-      ctx.fill();
+      //ctx.fill();
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
     }
     //アニメーションの各フレームの開始時に必要
     function clear() {
@@ -178,49 +190,45 @@
         rect(0, 0, WIDTH, HEIGHT);
         isHit = false;
 
-        /*
-        for (let i = 0; i < imgs.length; i++) {
-            draw_image(i);
-        }
 
-        // 各画像をcanvasに描画する処理
-        function draw_image(num) {
-            imgArr[num] = new Image();
-            imgArr[num].src = imgs[num];
-            // 画像読み込み後にカウントアップ
-            imgArr[num].onload = function() {
-                imgCount++;
-                // すべての画像読み込みが完了した時
-                if(imgCount >= imgs.length) {
-                    // 各画像を順番に描画
-                    for (var i = 0; i < imgs.length; i++) {
-                        ctx.drawImage(imgArr[i], (i * 0.001), (i * 0.001));
-                    }
-                }
-            }
-        }
-        */
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(" + [0, 0, 255, 0.5] + ")";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+
+
+        //画像をCanvasのサイズに合わせて等倍して画像をcanvasに貼り付ける.
+        var canvas_width = 300;
+        var canvas_hegiht = 400;
+
+        ctx.drawImage(background,0,0,canvas_width, background.height * canvas_width / background.width);
+
+
+
         for (let i = 0; i < rects.length; i++) {
           const r = rects[i];
 
           ctx.fillStyle = r.fill;
 
           //画像の場合
-          ctx.drawImage(img, r.x, r.y, r.width, r.height);
-            if (drag_rect && !r.isDragging) {
-              if(
-                  Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
-                  &&
-                  Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
-                ){
-                  isHit = true;
-                  ctx.strokeStyle = "red";
-                  ctx.fillStyle = "transparent";
-                  ctx.beginPath();
-                  ctx.rect(r.x, r.y, r.width, r.height);
-                  ctx.stroke();
+          background.onload = () => {
+            ctx.drawImage(img, r.x, r.y, r.width, r.height);
+              if (drag_rect && !r.isDragging) {
+                if(
+                    Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
+                    &&
+                    Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
+                  ){
+                    isHit = true;
+                    ctx.strokeStyle = "red";
+                    ctx.fillStyle = "transparent";
+                    ctx.beginPath();
+                    ctx.rect(r.x, r.y, r.width, r.height);
+                    ctx.stroke();
+                  }
                 }
-              }
+            };
         }
 
 
