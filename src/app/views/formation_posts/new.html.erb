@@ -15,65 +15,66 @@
     <%= f.text_area :body %>
 
 <div>
-    <canvas id="canvas" width=300 height=300></canvas>
+    <canvas id="canvas" width=300 height=400></canvas>
 </div>
 
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
     <%= f.hidden_field :coordinates, value: "" %>
     <%= f.hidden_field :image_url, value: "" %>
 
-<div class="zone">
-	<div class="zone-inner">
-		<div id="wig_1" class="widget draggable ui-widget-content">
-			<div class="widget-inner"></div>
-			<h5 class="wig-txt text-center">drag me!</h5>
-		</div>
-		<div id="wig_2" class="widget draggable ui-widget-content">
-			<div class="widget-inner"></div>
-		</div>
-		<div id="wig_3" class="widget draggable ui-widget-content">
-			<div class="widget-inner"></div>
-		</div>
-	</div>
-</div>
-<script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-<script type="text/javascript">
+<script>
     window.onload = function () {
         // canvas要素を取得
-        var canvas = document.getElementById("canvas");
+        const canvas = document.getElementById("canvas");
         // canvas要素が持つgetContext()メソッドを実行し、
         // グラフィック描画のためのメソッドやプロパティを
         // 持つオブジェクトを取得する。
         // 引数を"2d"とすることで2Dグラフィックの描画に
         // 特化したメソッドやプロパティを持つオブジェクトを取得し、
         // 定数ctxに格納する。
-        var ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
         // 定数ctxに格納したオブジェクトがもつプロパティやメソッドは
         // ctx.プロパティ名、ctx.メソッド名() で呼び出せる
 
-
-        var BB = canvas.getBoundingClientRect();
+        const BB = canvas.getBoundingClientRect();
         //左辺の座標
-        var offsetX = BB.left;
+        const offsetX = BB.left;
         //四角形の上辺の座標
-        var offsetY = BB.top;
-        var WIDTH = canvas.width;
-        var HEIGHT = canvas.height;
+        const offsetY = BB.top;
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
 
-        var dragok = false;
-        var startX;
-        var startY;
-        var dataURL =  canvas.toDataURL('image/png');
-        console.log(window.location);
-        //window.location = dataURL;
+        let dragok = false;
+        let startX;
+        let startY;
+        let dataURL =  canvas.toDataURL('image/png');
+        let isHit = false;
+        let drag_rect = null;
+        let originalX;
+        let originalY;
 
-        var img = new Image();
+        //const background = new Image();
+        //background.src = "/images/ground.jpg";
+
+        const img = new Image();
         img.src = "/images/uni.jpg";
+
         img.onload = () => {
         draw();
         }
 
-        var rects = [];
+        /*
+        // canvasに表示する画像
+        var imgs = [
+            '/images/ground.jpg',
+            '/images/uni.jpg'
+        ];
+
+        var imgArr = [];
+        var imgCount = 0;
+        */
+
+        let rects = [];
         rects.push({
         x: 220 - 10,
         y: 90 - 35,
@@ -157,7 +158,7 @@
 
     draw();
 
-    var url = canvas.toDataURL('image/jpeg');
+    let url = canvas.toDataURL('image/jpeg');
     document.getElementById("formation_post_image_url").value = url;
 
     function rect(x, y, w, h) {
@@ -175,14 +176,52 @@
         clear();
         ctx.fillStyle = "#FAF7F8";
         rect(0, 0, WIDTH, HEIGHT);
+        isHit = false;
 
-      for (var i = 0; i < rects.length; i++) {
-        var r = rects[i];
-        ctx.fillStyle = r.fill;
+        /*
+        for (let i = 0; i < imgs.length; i++) {
+            draw_image(i);
+        }
 
-        //画像の場合
-        ctx.drawImage(img, r.x, r.y, r.width, r.height);
-      }
+        // 各画像をcanvasに描画する処理
+        function draw_image(num) {
+            imgArr[num] = new Image();
+            imgArr[num].src = imgs[num];
+            // 画像読み込み後にカウントアップ
+            imgArr[num].onload = function() {
+                imgCount++;
+                // すべての画像読み込みが完了した時
+                if(imgCount >= imgs.length) {
+                    // 各画像を順番に描画
+                    for (var i = 0; i < imgs.length; i++) {
+                        ctx.drawImage(imgArr[i], (i * 0.001), (i * 0.001));
+                    }
+                }
+            }
+        }
+        */
+        for (let i = 0; i < rects.length; i++) {
+          const r = rects[i];
+
+          ctx.fillStyle = r.fill;
+
+          //画像の場合
+          ctx.drawImage(img, r.x, r.y, r.width, r.height);
+            if (drag_rect && !r.isDragging) {
+              if(
+                  Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
+                  &&
+                  Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
+                ){
+                  isHit = true;
+                  ctx.strokeStyle = "red";
+                  ctx.fillStyle = "transparent";
+                  ctx.beginPath();
+                  ctx.rect(r.x, r.y, r.width, r.height);
+                  ctx.stroke();
+                }
+              }
+        }
 
 
     }
@@ -192,15 +231,19 @@
       e.stopPropagation();
       //e.clientXはWEB画面全体のx座標（押した箇所のx座標）
       //offsetXはcanvasの左上のx座標
-      var mx = parseInt(e.clientX - offsetX);
-      var my = parseInt(e.clientY - offsetY);
+      const mx = parseInt(e.clientX - offsetX);
+      const my = parseInt(e.clientY - offsetY);
       //アイコンを押したときのx座標とy座標を記録している
       dragok = false;
-      for (var i = 0; i < rects.length; i++) {
-        var r = rects[i];
+      for (let i = 0; i < rects.length; i++) {
+        const r = rects[i];
         if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
           dragok = true;
           r.isDragging = true;
+          drag_rect = r;
+          originalX = r.x;
+          originalY = r.y;
+
         }
       }
       //startX,startYに最初アイコンをクリックした時の座標が記録される
@@ -215,9 +258,19 @@
 
         dragok = false;
 
-        for (var i = 0; i < rects.length; i++) {
+        for (let i = 0; i < rects.length; i++) {
             rects[i].isDragging = false;
         }
+
+        if(isHit){
+            //重なっていたら元の位置に戻す
+            drag_rect.x = originalX;
+            drag_rect.y = originalY;
+          }
+          isHit = false;
+          drag_rect = null;
+          draw();
+
         document.getElementById('formation_post_coordinates').value = JSON.stringify(rects);
 
         url = canvas.toDataURL('image/jpeg');
@@ -231,14 +284,14 @@
           e.preventDefault();
           e.stopPropagation();
 
-          var mx = parseInt(e.clientX - offsetX);
-          var my = parseInt(e.clientY - offsetY);
+          const mx = parseInt(e.clientX - offsetX);
+          const my = parseInt(e.clientY - offsetY);
 
-          var dx = mx - startX;
-          var dy = my - startY;
+          const dx = mx - startX;
+          const dy = my - startY;
 
-          for (var i = 0; i < rects.length; i++) {
-            var r = rects[i];
+          for (let i = 0; i < rects.length; i++) {
+            const r = rects[i];
             if (r.isDragging) {
               r.x += dx;
               r.y += dy;
@@ -250,14 +303,6 @@
 
           startX = mx;
           startY = my;
-
-          if(
-            Math.abs(red.x - blue.x) < red.width/2 + blue.width/2 //横の判定
-            &&
-            Math.abs(red.y - blue.y) < red.height/2 + blue.height/2 //縦の判定
-          ){
-            console.log("hit"); // hit
-          }
 
         }
 
@@ -300,104 +345,23 @@
 
     }
      // selectタグを取得する
-    var Element = document.getElementById("match_schedule");
-    var option = []
+    let Element = document.getElementById("match_schedule");
+    let option = []
     console.log(res.areas[0].name)
 
-    for (var i = 0; i<res.areas.length; i++) {
+    for (let i = 0; i<res.areas.length; i++) {
       // optionタグを作成する
-      var option = document.createElement("option");
+      let option = document.createElement("option");
       option.value = res.areas[i].name;
       option.innerText = res.areas[i].name;
       Element.appendChild(option);
     }
       console.log(option);
     }
+
   callApi();
 
-
-
-  $(function() {
-	var xSave;
-	var ySave;
-	$( ".widget" ).draggable({
-		containment: 'parent',
-		grid: [50,50],
-		stack: '.widget',
-		start: function(event,ui) {
-			// save coordinates for collision detection.
-			xSave = $(this).position().left;
-			ySave = $(this).position().top;
-			var $el = $(this);
-			var $elSibs = $(this).siblings('.widget');
-			// DETECT COLLISION
-			$elSibs.each(function() {
-				var self = this;
-				var $sib = $(self);
-				collision($sib, $el);
-			});
-		},
-
-		stop: function(event,ui) {
-			var $el = $(this);
-			var $elSibs = $(this).siblings('.widget');
-			$el.removeClass('dragging');
-			$elSibs.addClass('not-dragging');
-			// DETECT COLLISION
-			$elSibs.each(function() {
-				var self = this;
-				var $sib = $(self);
-				collision($sib, $el);
-				var result = collision($sib, $el);
-				// if there is collision, we send back to start position.
-				if(result == true) {
-					$el.css({'top':ySave, 'left':xSave});
-					$sib.find('.widget-inner').removeClass('collision');
-				}
-			});
-		}
-	});
-
-	// Collision detection
-	function collision($sib, $el) {
-		var sibInner = $sib.find('.widget-inner');
-		var wigInner = $el.find('.widget-inner');
-		var x1 = wigInner.offset().left;
-		var y1 = wigInner.offset().top;
-		var h1 = wigInner.outerHeight(true);
-		var w1 = wigInner.outerWidth(true);
-		var b1 = y1 + h1;
-		var r1 = x1 + w1;
-		var x2 = sibInner.offset().left;
-		var y2 = sibInner.offset().top;
-		var h2 = sibInner.outerHeight(true);
-		var w2 = sibInner.outerWidth(true);
-		var b2 = y2 + h2;
-		var r2 = x2 + w2;
-
-		// CHECK FOR COLLISION
-		if (	 (r1 >= x2 && b1 >= y2 && y1 < y2 && x1 < r2)
-				|| (x1 <= r2 && b1 >= y2 && y1 < y2 && r1 > r2)
-				|| (r1 >= x2 && y1 <= b2 && b1 > b2 && x1 < x2)
-				|| (x1 <= r2 && y1 <= b2 && b1 > b2 && r1 > r2)
-				|| (y1 == y2 && r1 == r2 && b1 == b2 && x1 == x2)
-				|| (y1 >= y2 && x1 < r2 && b1 <= b2 && r1 > r2)
-				|| (y1 >= y2 && r1 >= x2 && b1 <= b2 && x1 < x2)
-				|| (x1 >= x2 && r1 <= r2 && y1 <= b2 && b1 > b2)
-				|| (x1 >= x2 && y1 >= y2 && b1 <= b2 && r1 <= r2)
-			 )
-		{
-			sibInner.addClass('collision');
-			return true;
-		} else {
-			sibInner.removeClass('collision');
-		}
-	}
-
-});
-
   };
-
 
 </script>
 
