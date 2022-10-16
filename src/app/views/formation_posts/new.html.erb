@@ -14,8 +14,9 @@
     <h4>本文</h4>
     <%= f.text_area :body %>
 
-<div>
-    <canvas id="canvas" width=300 height=400></canvas>
+<div class="canvas-wrapper">
+    <canvas id="canvas-back" width=300 height=445></canvas>
+    <canvas id="canvas" width=300 height=445></canvas>
 </div>
 
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
@@ -33,8 +34,8 @@
         // 特化したメソッドやプロパティを持つオブジェクトを取得し、
         // 定数ctxに格納する。
         const ctx = canvas.getContext("2d");
-        // 定数ctxに格納したオブジェクトがもつプロパティやメソッドは
-        // ctx.プロパティ名、ctx.メソッド名() で呼び出せる
+        const canvas_back = document.getElementById("canvas-back");
+        const ctx_back = canvas_back.getContext("2d");
 
         const BB = canvas.getBoundingClientRect();
         //左辺の座標
@@ -53,121 +54,104 @@
         let originalX;
         let originalY;
 
-
-        var background = new Image();
+        const background = new Image();
         background.src = "/images/ground.jpg";
 
-
+        background.onload = () => {
+        draw_background();
+        }
 
 
         const img = new Image();
-        img.src = "/images/uni.jpg";
+        img.src = "/images/uniform.jpg";
 
         img.onload = () => {
         draw();
         }
 
-        /*
-        let imagePath = "/images/ground.jpg";
-        drawground(canvas,imagePath);
-        function drawground(canvas,imagePath){
-            console.log("drawground");
-            const image = new Image();
-            image.addEventListener("load",function (){
-                canvas.width = image.naturalWidth;
-                canvas.height = image.naturalHeight;
-                ctx.drawImage(image, 0, 0);
-                ctx.scale(0.1, 0.1);
-                console.log("load!");
-            });
-            image.src = imagePath;
-        }
-        */
-
-
         let rects = [];
         rects.push({
-        x: 220 - 10,
-        y: 90 - 35,
-        width: 30,
-        height: 30,
-        //fill: "#444444",
+        x: 220,
+        y: 90,
+        width: 40,
+        height: 40,
+        fill: "#800080",
         isDragging: false
         });
         rects.push({
-        x: 140 - 10,
-        y: 50 - 35,
-        width: 30,
-        height: 30,
-        //fill: "#ff550d",
+        x: 130,
+        y: 85,
+        width: 40,
+        height: 40,
+        //fill: "#ff55040,
         isDragging: false
         });
         rects.push({
-        x: 60 - 10,
-        y: 90 - 35,
-        width: 30,
-        height: 30,
+        x: 45,
+        y: 90,
+        width: 40,
+        height: 40,
         //fill: "#800080",
         isDragging: false
         });
         rects.push({
+        x: 85,
+        y: 170,
+        width: 40,
+        height: 40,
+        //fill: "#0c64e8",
+        isDragging: false
+        });
+        rects.push({
+        x: 180,
+        y: 170,
+        width: 40,
+        height: 40,
+        //fill: "#0c64e8",
+        isDragging: false
+        });
+        rects.push({
+        x: 130,
+        y: 240,
+        width: 40,
+        height: 40,
+        //fill: "#0c64e8",
+        isDragging: false
+        });
+        rects.push({
         x: 100 - 10,
-        y: 150 - 35,
-        width: 30,
-        height: 30,
+        y: 320,
+        width: 40,
+        height: 40,
         //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
-        x: 180 - 10,
-        y: 150 - 35,
-        width: 30,
-        height: 30,
+        x: 180,
+        y: 320,
+        width: 40,
+        height: 40,
         //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
-        x: 140 - 10,
-        y: 200 - 35,
-        width: 30,
-        height: 30,
+        x: 20,
+        y: 280,
+        width: 40,
+        height: 40,
         //fill: "#0c64e8",
         isDragging: false
         });
         rects.push({
-        x: 100 - 10,
-        y: 250 - 35,
-        width: 30,
-        height: 30,
-        //fill: "#0c64e8",
-        isDragging: false
-        });
-        rects.push({
-        x: 180 - 10,
-        y: 250 - 35,
-        width: 30,
-        height: 30,
-        //fill: "#0c64e8",
-        isDragging: false
-        });
-        rects.push({
-        x: 30 - 10,
-        y: 220 - 35,
-        width: 30,
-        height: 30,
-        //fill: "#0c64e8",
-        isDragging: false
-        });
-        rects.push({
-        x: 260 - 10,
-        y: 220 - 35,
-        width: 30,
-        height: 30,
+        x: 230,
+        y: 280,
+        width: 40,
+        height: 40,
         //fill: "#0c64e8",
         isDragging: false
         });
 
-    draw();
+    //draw();
 
     let url = canvas.toDataURL('image/jpeg');
     document.getElementById("formation_post_image_url").value = url;
@@ -176,7 +160,7 @@
       ctx.beginPath();
       ctx.rect(x, y, w, h);
       ctx.closePath();
-      //ctx.fill();
+      ctx.fill();
       ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
     }
     //アニメーションの各フレームの開始時に必要
@@ -184,27 +168,30 @@
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
     }
 
+    function clear_background() {
+        ctx_back.clearRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    function draw_background() {
+        ctx_back.beginPath();
+        //ctx_back.fillStyle = "rgba(" + [0, 0, 255, 0.5] + ")";
+        ctx_back.fillRect(0, 0, canvas_back.width, canvas_back.height);
+
+    //画像をCanvasのサイズに合わせて等倍して画像をcanvasに貼り付ける.
+    var canvas_background_width = 300;
+    var canvas_background_hegiht = 400;
+
+        ctx_back.drawImage(background,0,0,canvas_background_width, background.height * canvas_background_width / background.width);
+    }
+
+
     function draw() {
         clear();
-        ctx.fillStyle = "#FAF7F8";
+        //ctx.fillStyle = "#FAF7F8";
+        ctx.fillStyle = "rgba(" + [0, 0, 255, 0.01] + ")";
         rect(0, 0, WIDTH, HEIGHT);
+
         isHit = false;
-
-
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(" + [0, 0, 255, 0.5] + ")";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-
-
-
-        //画像をCanvasのサイズに合わせて等倍して画像をcanvasに貼り付ける.
-        var canvas_width = 300;
-        var canvas_hegiht = 400;
-
-        ctx.drawImage(background,0,0,canvas_width, background.height * canvas_width / background.width);
-
-
 
         for (let i = 0; i < rects.length; i++) {
           const r = rects[i];
@@ -212,7 +199,6 @@
           ctx.fillStyle = r.fill;
 
           //画像の場合
-          background.onload = () => {
             ctx.drawImage(img, r.x, r.y, r.width, r.height);
               if (drag_rect && !r.isDragging) {
                 if(
@@ -228,7 +214,7 @@
                     ctx.stroke();
                   }
                 }
-            };
+
         }
 
 
@@ -317,10 +303,11 @@
       }
 
   async function callApi() {
-    //const res = await fetch("http://api.football-data.org/v4/areas/", { mode: "no-cors" });
-    //console.log(res)
-    //const users = await res.json();
+    const res = await fetch("http://api.football-data.org/v4/areas/", { mode: "no-cors" });
+    console.log(res)
+    const users = await res.parse();
 
+    /*
     const res = {
       "count": 272,
       "filters": {},
@@ -352,16 +339,17 @@
       ]
 
     }
+    */
      // selectタグを取得する
     let Element = document.getElementById("match_schedule");
     let option = []
-    console.log(res.areas[0].name)
+    console.log(users.areas[0].name)
 
-    for (let i = 0; i<res.areas.length; i++) {
+    for (let i = 0; i<users.areas.length; i++) {
       // optionタグを作成する
       let option = document.createElement("option");
-      option.value = res.areas[i].name;
-      option.innerText = res.areas[i].name;
+      option.value = users.areas[i].name;
+      option.innerText = users.areas[i].name;
       Element.appendChild(option);
     }
       console.log(option);
