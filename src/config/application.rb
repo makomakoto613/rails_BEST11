@@ -11,6 +11,10 @@ module App
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
+    config.autoload_paths += %W(#{config.root}/lib)
+
+    # productionでも呼び出せるように設定
+    config.enable_dependency_loading = true
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
