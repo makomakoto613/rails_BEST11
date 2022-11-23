@@ -264,3 +264,13 @@
 .size {
   color:#1da1f2;
 }
+
+/*サッカーコート背景*/
+.canvas-wrapper {
+    position: relative;
+}
+.canvas-wrapper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

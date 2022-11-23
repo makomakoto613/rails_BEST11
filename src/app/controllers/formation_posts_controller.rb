@@ -10,7 +10,7 @@ class FormationPostsController < ApplicationController
 
   def new
     @formation_post = FormationPost.new
-    @uniform = Uniform.new
+
   end
 
   def edit
@@ -35,6 +35,10 @@ class FormationPostsController < ApplicationController
     @formation_post.save
     # redirect_to formation_posts_path
     redirect_to "/formation_posts/#{@formation_post.id}", notice: '保存しました'
+    @match_schedule = MatchSchedule.get_match_schedule(uri)
+    @match_schedule.each do |match_schedule|
+      puts match_schedule
+    end
   end
 
   # formation_post_params = {
