@@ -2,10 +2,10 @@
 #
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
-ENV.each { |k, v| env(k, v) }
+set :environment, :development
 
-every 1.minute do
-    rake soccer_api:soccer_API
+every :day, at: '21:35' do
+    "rake soccer_api:soccer_API"
 end
 
 # Example:
