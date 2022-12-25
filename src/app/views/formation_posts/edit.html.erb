@@ -21,128 +21,209 @@
 
 
 <script>
-    window.onload = function () {
-      // canvas要素を取得
-      var canvas = document.getElementById("canvas");
-      // canvas要素が持つgetContext()メソッドを実行し、
-      // グラフィック描画のためのメソッドやプロパティを
-      // 持つオブジェクトを取得する。
-      // 引数を"2d"とすることで2Dグラフィックの描画に
-      // 特化したメソッドやプロパティを持つオブジェクトを取得し、
-      // 定数ctxに格納する。
-      var ctx = canvas.getContext("2d");
-      // 定数ctxに格納したオブジェクトがもつプロパティやメソッドは
-      // ctx.プロパティ名、ctx.メソッド名() で呼び出せる
+window.onload = function () {
+        // canvas要素を取得
+        const canvas = document.getElementById("canvas");
+        // canvas要素が持つgetContext()メソッドを実行し、
+        // グラフィック描画のためのメソッドやプロパティを
+        // 持つオブジェクトを取得する。
+        // 引数を"2d"とすることで2Dグラフィックの描画に
+        // 特化したメソッドやプロパティを持つオブジェクトを取得し、
+        // 定数ctxに格納する。
+        const ctx = canvas.getContext("2d");
+        const canvas_back = document.getElementById("canvas-back");
+        const ctx_back = canvas_back.getContext("2d");
+
+        const BB = canvas.getBoundingClientRect();
+        //左辺の座標
+        const offsetX = BB.left;
+        //四角形の上辺の座標
+        const offsetY = BB.top;
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+
+        let dragok = false;
+        let startX;
+        let startY;
+        let dataURL =  canvas.toDataURL('image/png');
+        let isHit = false;
+        let drag_rect = null;
+        let originalX;
+        let originalY;
+
+        const background = new Image();
+        background.src = "/images/ground.jpg";
+
+        background.onload = () => {
+        draw_background();
+        }
 
 
-      var BB = canvas.getBoundingClientRect();
-      //左辺の座標
-      var offsetX = BB.left;
-      //四角形の上辺の座標
-      var offsetY = BB.top;
-      var WIDTH = canvas.width;
-      var HEIGHT = canvas.height;
+        const img = new Image();
+        img.src = "/images/uniform.png";
 
-      var dragok = false;
-      var startX;
-      var startY;
+        img.onload = () => {
 
-      var img = new Image();
-      img.src = "/images/uni.jpg";
-      img.onload = () => {
         draw();
-      }
+        }
 
-      var coordinates = document.getElementById('formation_post_coordinates').value;
 
-      var rects = JSON.parse(coordinates);
+      const coordinates = document.getElementById('formation_post_coordinates').value;
+
+      const rects = JSON.parse(coordinates);
 
       draw();
 
-      function rect(x, y, w, h) {
-        ctx.beginPath();
-        ctx.rect(x, y, w, h);
-        ctx.closePath();
-        ctx.fill();
-      }
-      //アニメーションの各フレームの開始時に必要
-      function clear() {
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
-      }
+      let url = canvas.toDataURL('image/jpeg');
+      document.getElementById("formation_post_image_url").value = url;
 
-      function draw() {
+      function rect(x, y, w, h) {
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+    }
+    //アニメーションの各フレームの開始時に必要
+    function clear() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    function clear_background() {
+        ctx_back.clearRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    function draw_background() {
+        ctx_back.beginPath();
+        //ctx_back.fillStyle = "rgba(" + [0, 0, 255, 0.5] + ")";
+        ctx_back.fillRect(0, 0, canvas_back.width, canvas_back.height);
+
+    //画像をCanvasのサイズに合わせて等倍して画像をcanvasに貼り付ける.
+    var canvas_background_width = 300;
+    var canvas_background_hegiht = 400;
+
+        ctx_back.drawImage(background,0,0,canvas_background_width, background.height * canvas_background_width / background.width);
+    }
+
+
+    function draw() {
         clear();
-        ctx.fillStyle = "#FAF7F8";
+        //ctx.fillStyle = "#FAF7F8";
+        ctx.fillStyle = "rgba(" + [0, 0, 255, 0.01] + ")";
+
         rect(0, 0, WIDTH, HEIGHT);
 
-        for (var i = 0; i < rects.length; i++) {
-          var r = rects[i];
+        isHit = false;
+
+        for (let i = 0; i < rects.length; i++) {
+          const r = rects[i];
+
           ctx.fillStyle = r.fill;
-
-          //四角の場合
-          //rect(r.x, r.y, r.width, r.height);
-
-          //アイコンフォントの場合
-          //ctx.font = "900 " + r.width + "px 'Font Awesome 5 Free'";
-          //ctx.fillText("\uf553", r.x - 3, r.y + r.height - 2);
 
           //画像の場合
           ctx.drawImage(img, r.x, r.y, r.width, r.height);
+            if (drag_rect && !r.isDragging) {
+              if(
+                  Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
+                  &&
+                  Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
+                ){
+                  isHit = true;
+                  ctx.strokeStyle = "red";
+                  ctx.fillStyle = "transparent";
+                  ctx.beginPath();
+                  ctx.rect(r.x, r.y, r.width, r.height);
+                  ctx.stroke();
+                }
+              }
+          drawText(r)
         }
+    }
 
+    function drawText(r)
+    {
+      //var text = document.getElementById(text_id);
+      var value = "テスト"
+      //文字のスタイルを指定
+      ctx.font = '20px serif';
+      ctx.fillStyle = '#404040';
+      //文字の配置を指定（左上基準にしたければtop/leftだが、文字の中心座標を指定するのでcenter
+      ctx.textBaseline = 'center';
+      ctx.textAlign = 'center';
+      //座標を指定して文字を描く（座標は画像の中心に）
+      var x_text = (r.width / 2);
+      var y_text = (r.height / 2);
+      ctx.fillText(value, r.x + x_text, r.y + y_text);
+    }
+
+    canvas.onmousedown = myDown;
+
+    function myDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      //e.clientXはWEB画面全体のx座標（押した箇所のx座標）
+      //offsetXはcanvasの左上のx座標
+      const mx = parseInt(e.clientX - offsetX);
+      const my = parseInt(e.clientY - offsetY);
+      //アイコンを押したときのx座標とy座標を記録している
+      dragok = false;
+      for (let i = 0; i < rects.length; i++) {
+        const r = rects[i];
+        if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
+          dragok = true;
+          r.isDragging = true;
+          drag_rect = r;
+          originalX = r.x;
+          originalY = r.y;
+
+        }
       }
-      canvas.onmousedown = myDown;
+      //startX,startYに最初アイコンをクリックした時の座標が記録される
+      startX = mx;
+      startY = my;
+    }
 
-      function myDown(e) {
+    canvas.onmouseup = myUp;
+    function myUp(e) {
         e.preventDefault();
         e.stopPropagation();
-        //e.clientXはWEB画面全体のx座標（押した箇所のx座標）
-        //offsetXはcanvasの左上のx座標
-        var mx = parseInt(e.clientX - offsetX);
-        var my = parseInt(e.clientY - offsetY);
-        //アイコンを押したときのx座標とy座標を記録している
+
         dragok = false;
-        for (var i = 0; i < rects.length; i++) {
-          var r = rects[i];
-          if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
-            dragok = true;
-            r.isDragging = true;
+
+        for (let i = 0; i < rects.length; i++) {
+            rects[i].isDragging = false;
+        }
+
+        if(isHit){
+            //重なっていたら元の位置に戻す
+            drag_rect.x = originalX;
+            drag_rect.y = originalY;
           }
-        }
-        //startX,startYに最初アイコンをクリックした時の座標が記録される
-        startX = mx;
-        startY = my;
-      }
+          isHit = false;
+          drag_rect = null;
+          draw();
 
-      canvas.onmouseup = myUp;
-
-      function myUp(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        dragok = false;
-        for (var i = 0; i < rects.length; i++) {
-          rects[i].isDragging = false;
-        }
         document.getElementById('formation_post_coordinates').value = JSON.stringify(rects);
 
-      }
+        url = canvas.toDataURL('image/jpeg');
+        document.getElementById("formation_post_image_url").value = url;
 
-      canvas.onmousemove = myMove;
+    }
 
-      function myMove(e) {
+    canvas.onmousemove = myMove;
+    function myMove(e) {
         if (dragok) {
           e.preventDefault();
           e.stopPropagation();
 
-          var mx = parseInt(e.clientX - offsetX);
-          var my = parseInt(e.clientY - offsetY);
+          const mx = parseInt(e.clientX - offsetX);
+          const my = parseInt(e.clientY - offsetY);
 
-          var dx = mx - startX;
-          var dy = my - startY;
+          const dx = mx - startX;
+          const dy = my - startY;
 
-          for (var i = 0; i < rects.length; i++) {
-            var r = rects[i];
+          for (let i = 0; i < rects.length; i++) {
+            const r = rects[i];
             if (r.isDragging) {
               r.x += dx;
               r.y += dy;
@@ -152,13 +233,70 @@
 
           draw();
 
+
           startX = mx;
           startY = my;
 
         }
+
       }
 
-    };
+  async function callApi() {
+    const res = await fetch("http://api.football-data.org/v4/areas/", { mode: "no-cors" });
+    console.log(res)
+    const users = await res.parse();
+
+    /*
+    const res = {
+      "count": 272,
+      "filters": {},
+      "areas": [
+          {
+              "id": 2000,
+              "name": "Afghanistan",
+              "countryCode": "AFG",
+              "flag": null,
+              "parentAreaId": 2014,
+              "parentArea": "Asia"
+          },
+          {
+              "id": 2271,
+              "name": "Zanzibar",
+              "countryCode": "ZAN",
+              "flag": null,
+              "parentAreaId": 2001,
+              "parentArea": "Africa"
+          },
+          {
+              "id": 2272,
+              "name": "Zimbabwe",
+              "countryCode": "ZIM",
+              "flag": null,
+              "parentAreaId": 2001,
+              "parentArea": "Africa"
+          }
+      ]
+
+    }
+    */
+     // selectタグを取得する
+    let Element = document.getElementById("match_schedule");
+    let option = []
+    console.log(users.areas[0].name)
+
+    for (let i = 0; i<users.areas.length; i++) {
+      // optionタグを作成する
+      let option = document.createElement("option");
+      option.value = users.areas[i].name;
+      option.innerText = users.areas[i].name;
+      Element.appendChild(option);
+    }
+      console.log(option);
+    }
+
+  callApi();
+
+  };
 </script>
 
 <% end %>

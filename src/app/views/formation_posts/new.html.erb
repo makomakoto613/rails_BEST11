@@ -1,43 +1,41 @@
 <h1>新規投稿</h1>
 <!-- form_for部分 -->
 
-<%= form_for(@formation_post) do |f| %>
+<%= form_with model:@formation_post, url:'/formation_posts', local:true do |f| %>
 
     <select id="match_schedule">
           <option>対戦カードを選択してください</option>
-
     </select>
 
     <h4>タイトル</h4>
     <%= f.text_field :title %>
 
+
     <h4>本文</h4>
     <%= f.text_area :body %>
+
+<div>
+  <div class="canvas-wrapper">
+      <canvas id="canvas" width="300" height="445"></canvas>
+  </div>
+</div>
+
+<div style="height:490px"></div>
+
 <div>
     <%= f.submit '投稿', class:"btn btn-lg btn-block", id:"save-button" %>
     <%= f.hidden_field :coordinates, value: "" %>
     <%= f.hidden_field :image_url, value: "" %>
-</div>
-
-<div class="canvas-wrapper">
-    <canvas id="canvas-back" width=300 height=445></canvas>
-    <canvas id="canvas" width=300 height=445></canvas>
+    
 </div>
 
 <script>
     window.onload = function () {
         // canvas要素を取得
         const canvas = document.getElementById("canvas");
-        // canvas要素が持つgetContext()メソッドを実行し、
-        // グラフィック描画のためのメソッドやプロパティを
-        // 持つオブジェクトを取得する。
-        // 引数を"2d"とすることで2Dグラフィックの描画に
-        // 特化したメソッドやプロパティを持つオブジェクトを取得し、
-        // 定数ctxに格納する。
         const ctx = canvas.getContext("2d");
-        const canvas_back = document.getElementById("canvas-back");
-        const ctx_back = canvas_back.getContext("2d");
-
+        // const canvas_back = document.getElementById("canvas-back");
+        // const ctx_back = canvas_back.getContext("2d");
         const BB = canvas.getBoundingClientRect();
         //左辺の座標
         const offsetX = BB.left;
@@ -49,24 +47,22 @@
         let dragok = false;
         let startX;
         let startY;
-        let dataURL =  canvas.toDataURL('image/png');
+        let dataURL = canvas.toDataURL('image/png');
         let isHit = false;
         let drag_rect = null;
         let originalX;
         let originalY;
 
-        const background = new Image();
-        background.src = "/images/ground.jpg";
-
-        background.onload = () => {
-        draw_background();
-        }
-
-
+        // ユニフォーム画像
         const img = new Image();
-        img.src = "/images/uniform.jpg";
-
+        img.src = "/images/uniform.png";
         img.onload = () => {
+        draw();
+        }
+        // 背景画像を描画
+        const bgImg = new Image();
+        bgImg.src = "/images/ground.jpg";
+        bgImg.onload = () => {
         draw();
         }
 
@@ -152,7 +148,7 @@
         isDragging: false
         });
 
-    //draw();
+    draw();
 
     let url = canvas.toDataURL('image/jpeg');
     document.getElementById("formation_post_image_url").value = url;
@@ -162,65 +158,61 @@
       ctx.rect(x, y, w, h);
       ctx.closePath();
       ctx.fill();
-      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      // ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
     }
     //アニメーションの各フレームの開始時に必要
     function clear() {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
     }
 
-    function clear_background() {
-        ctx_back.clearRect(0, 0, WIDTH, HEIGHT);
-    }
-
-    function draw_background() {
-        ctx_back.beginPath();
-        //ctx_back.fillStyle = "rgba(" + [0, 0, 255, 0.5] + ")";
-        ctx_back.fillRect(0, 0, canvas_back.width, canvas_back.height);
-
-    //画像をCanvasのサイズに合わせて等倍して画像をcanvasに貼り付ける.
-    var canvas_background_width = 300;
-    var canvas_background_hegiht = 400;
-
-        ctx_back.drawImage(background,0,0,canvas_background_width, background.height * canvas_background_width / background.width);
-    }
-
-
     function draw() {
         clear();
-        //ctx.fillStyle = "#FAF7F8";
-        ctx.fillStyle = "rgba(" + [0, 0, 255, 0.01] + ")";
+        ctx.fillStyle = "#FAF7F8";
         rect(0, 0, WIDTH, HEIGHT);
-
+        ctx.drawImage(bgImg, 0, 0, WIDTH, HEIGHT);
         isHit = false;
 
         for (let i = 0; i < rects.length; i++) {
           const r = rects[i];
-
           ctx.fillStyle = r.fill;
+          ctx.drawImage(img, r.x, r.y, r.width, r.height);
 
-          //画像の場合
-            ctx.drawImage(img, r.x, r.y, r.width, r.height);
-              if (drag_rect && !r.isDragging) {
-                if(
-                    Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
-                    &&
-                    Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
-                  ){
-                    isHit = true;
-                    ctx.strokeStyle = "red";
-                    ctx.fillStyle = "transparent";
-                    ctx.beginPath();
-                    ctx.rect(r.x, r.y, r.width, r.height);
-                    ctx.stroke();
-                  }
-                }
-
-        }
-
-
+          if (drag_rect && !r.isDragging) {
+            if(
+                Math.abs(r.x - drag_rect.x) < r.width/2 + drag_rect.width/2 //横の判定
+                &&
+                Math.abs(r.y - drag_rect.y) < r.height/2 + drag_rect.height/2 //縦の判定
+              ){
+                isHit = true;
+                ctx.strokeStyle = "red";
+                ctx.fillStyle = "transparent";
+                ctx.beginPath();
+                ctx.rect(r.x, r.y, r.width, r.height);
+                ctx.stroke();
+              }
+            }
+        drawText(r)
+      }
     }
+
+    function drawText(r)
+    {
+      //var text = document.getElementById(text_id);
+      var value = "テスト"
+      //文字のスタイルを指定
+      ctx.font = '20px serif';
+      ctx.fillStyle = '#404040';
+      //文字の配置を指定（左上基準にしたければtop/leftだが、文字の中心座標を指定するのでcenter
+      ctx.textBaseline = 'center';
+      ctx.textAlign = 'center';
+      //座標を指定して文字を描く（座標は画像の中心に）
+      var x_text = (r.width / 2);
+      var y_text = (r.height / 2);
+      ctx.fillText(value, r.x + x_text, r.y + y_text);
+    }
+
     canvas.onmousedown = myDown;
+
     function myDown(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -270,7 +262,6 @@
 
         url = canvas.toDataURL('image/jpeg');
         document.getElementById("formation_post_image_url").value = url;
-
     }
 
     canvas.onmousemove = myMove;
@@ -298,9 +289,7 @@
 
           startX = mx;
           startY = my;
-
         }
-
       }
 
   async function callApi() {
@@ -355,11 +344,7 @@
     }
       console.log(option);
     }
-
   callApi();
-
   };
-
 </script>
-
 <% end %>
