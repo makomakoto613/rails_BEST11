@@ -1,6 +1,6 @@
 <header>
   <h1 class="headline">
-    <a href="#">CARAVAN</a>
+    <a href="#">BEST11</a>
   </h1>
   <div class="social">
     <i class="fa fa-facebook-square"></i>
@@ -41,6 +41,8 @@
         <div class="formation_post-item clearfix">
           <section class="formation_post-text">
             <h3 class="formation_post-text-headline"><%= link_to formation_post.title, formation_post_path(formation_post) %></h3>
+            <h2 class="formation_post-text-headline"><%= formation_post.body %></h2>
+            <%= formation_post.image_url %>
             <p class="formation_post-date"><%= formation_post.created_at %></p>
           </section>
         </div>
